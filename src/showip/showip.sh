@@ -89,8 +89,8 @@ if [[ -n "$INTERFACE" ]]; then
     # Show stats for specific interface
     echo "$INTERFACE:"
     cat /proc/net/dev | grep "$INTERFACE" | awk '{
-        printf "  RX: %s bytes, %s packets\n", $2, $2
-        printf "  TX: %s bytes, %s packets\n", $10, $10
+        printf "  RX: %s bytes, %s packets\n", $2, $3
+        printf "  TX: %s bytes, %s packets\n", $10, $11
     }'
 else
     # Show summary stats

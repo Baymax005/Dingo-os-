@@ -7,7 +7,7 @@ obj/
 
 # Executables
 *.out
-task-manager
+/build/bin/task-manager
 
 # IDE
 .vscode/
