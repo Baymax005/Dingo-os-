@@ -1,0 +1,41 @@
+# Dingo OS - Additional packages to include in ISO
+# These will be pre-installed in the Dingo OS distribution
+
+# Build tools (for users who want to compile)
+build-essential
+g++
+gcc
+make
+git
+
+# Development tools
+python3
+python3-pip
+python3-dev
+
+# Utilities
+curl
+wget
+net-tools
+iputils-ping
+openssh-client
+openssh-server
+
+# Editors
+vim
+nano
+
+# System tools
+htop
+tmux
+screen
+
+# Networking
+traceroute
+whois
+dig
+nmap
+
+# Documentation
+man-db
+info
