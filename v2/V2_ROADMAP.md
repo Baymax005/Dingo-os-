@@ -408,6 +408,43 @@ dingo-audit --help
 
 ---
 
-**v2 Target**: Friday EOD (1.5 weeks from now)
+## 10. Future Vision (v3+)
 
-For updates, check GitHub repository.
+### Custom Installer (Post-v2)
+
+**Goal**: Build proprietary Dingo OS installer like Pop!_OS and Zorin OS
+
+**Why Not Now**: 
+- v2 timeline is tight (1.5 weeks)
+- Cubic sufficient for MVP
+- Custom installer requires significant effort (4-6 weeks)
+
+**What It Would Include**:
+- Graphical installer with Dingo OS branding
+- Custom installation options
+- Pre-configured v2 utilities
+- Post-install setup wizard
+- Professional user experience
+
+**Technology Options**:
+- **Calamares Framework** - Modular installer (easier)
+- **Custom Python/Qt** - Full control (harder)
+- **Ubiquity Fork** - Ubuntu's installer customized
+- **Bash + Zenity** - Simple GUI approach
+
+**Reference Projects**:
+- Pop!_OS Installer (https://github.com/pop-os/installer)
+- Zorin OS (customized Ubuntu installer)
+- Fedora Anaconda (enterprise approach)
+
+**Timeline**: Post-v2 (v3.0+, estimated 4-6 weeks)
+
+**This Will Enable**:
+- Professional distribution
+- Custom partitioning
+- Package selection during install
+- Branding and customization
+- Update management
+- System configuration wizard
+
+---
