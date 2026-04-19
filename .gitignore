@@ -32,3 +32,6 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .Python
+
+# Academic/Internal Documents (not for public repo)
+PROPOSAL.md
