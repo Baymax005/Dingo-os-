@@ -1,377 +1,413 @@
-# Dingo OS v2 - Roadmap & Architecture
+# Dingo OS v2 - Roadmap (1.5 Week Sprint)
 
-**Status**: Planning phase  
-**Target**: Enhanced package management, security tools, and advanced utilities
+**Status**: Development sprint  
+**Timeline**: 1.5 weeks  
+**Focus**: ding enhancements + dingo-audit implementation
 
 ---
 
 ## Overview
 
-Dingo OS v2 builds on v1 by introducing:
+Dingo OS v2 focuses on two core components:
 
-1. **ding Package Manager** — Replace/wrap apt with smart features
-2. **dingo-audit** — Vulnerability scanning and forensic checks (✅ Ready)
-3. **Advanced Security Tools** — dingo-forensics, dingo-monitor
-4. **Plugin Architecture** — Extensible system for custom tools
+1. **ding v2** — Enhanced package manager with plugins and caching
+2. **dingo-audit** — Security vulnerability and forensic scanner
 
 ---
 
-## v2 Component Architecture
+## v2 Architecture
 
 ```
-┌────────────────────────────────────────────────┐
-│       Dingo OS v2 Architecture                 │
-├────────────────────────────────────────────────┤
-│                                                │
-│  ┌─────────── User Layer ──────────────┐     │
-│  │  Advanced CLI Tools (in $PATH)      │     │
-│  │  ┌──────┐  ┌────────┐  ┌────────┐  │     │
-│  │  │ding  │  │dingo   │  │dingo   │  │     │
-│  │  │      │  │-audit  │  │-monitor│  │     │
-│  │  └──────┘  └────────┘  └────────┘  │     │
-│  └─────────────────────────────────────┘     │
-│                                                │
-│  ┌─── Package Management Layer ──────┐       │
-│  │  ding (Custom apt wrapper)         │       │
-│  │  ├─ Smart caching                 │       │
-│  │  ├─ Plugin system                 │       │
-│  │  ├─ Repository management         │       │
-│  │  └─ Dependency analysis           │       │
-│  └────────────────────────────────────┘       │
-│                                                │
-│  ┌──── Security & Audit Layer ────────┐      │
-│  │  dingo-audit (✅ Ready)             │      │
-│  │  dingo-forensics (Planned)         │      │
-│  │  dingo-monitor (Planned)           │      │
-│  └────────────────────────────────────┘      │
-│                                                │
-│  ┌──── Ubuntu 22.04 LTS (Base) ──────┐      │
-│  │ Kernel | apt | Core System         │      │
-│  └────────────────────────────────────┘      │
-│                                                │
-└────────────────────────────────────────────────┘
+┌────────────────────────────────────┐
+│    Dingo OS v2 (1.5 weeks)         │
+├────────────────────────────────────┤
+│                                    │
+│  ┌────── User Layer ──────┐       │
+│  │  ding (enhanced)       │       │
+│  │  dingo-audit           │       │
+│  └─────────────────────────┘       │
+│                                    │
+│  ┌──── Ubuntu 22.04 LTS ─────┐    │
+│  │ Kernel | apt | System      │    │
+│  └────────────────────────────┘    │
+│                                    │
+└────────────────────────────────────┘
 ```
 
 ---
 
-## 1. ding Package Manager Enhancement
+## Component 1: ding v2 Enhancements
 
-### Current Status (v1)
+### Features to Add (Priority Order)
 
-`ding` wraps `apt` with simplified commands.
-
-### v2 Enhancement
-
-**Features to Add**:
-
+#### Priority 1 (Must Have)
 1. **Smart Caching**
    ```bash
-   ding cache-stats      # Show cache usage
-   ding cache-clean      # Clear cache
-   ding cache-rebuild    # Rebuild index
+   ding cache-stats          # Show cache usage
+   ding cache-clean          # Clear cache
+   ding cache-rebuild        # Rebuild index
    ```
+   - Cache frequent searches
+   - Auto-cleanup old entries
+   - Faster subsequent searches
 
-2. **Plugin System**
-   ```bash
-   ding plugin list                    # Show installed plugins
-   ding plugin install security-check
-   ding plugin remove old-plugin
-   ```
-
-3. **Repository Management**
+2. **Repository Management**
    ```bash
    ding repo add ubuntu-security ppa:ubuntu/security
    ding repo list
    ding repo remove ubuntu-security
+   ding repo enable/disable NAME
    ```
+   - Add/remove PPAs
+   - List active repos
+   - Enable/disable repos
 
-4. **Dependency Analysis**
+#### Priority 2 (Nice to Have)
+3. **Plugin System (Basic)**
    ```bash
-   ding depends gcc              # Show dependencies
-   ding depends-on gcc           # Show what depends on gcc
-   ding depends-tree gcc         # Tree view
+   ding plugin list
+   ding plugin load custom-commands.py
+   ding plugin execute NAME
    ```
+   - Load custom plugins
+   - Simple hook system
+   - Plugin directory: `~/.dingo/plugins/`
 
-5. **Advanced Search**
-   ```bash
-   ding search --category dev gcc
-   ding search --installed
-   ding search --upgradable
-   ding search --size >10M
-   ```
+### Implementation Files
 
-### Implementation Plan
+```
+v2/src/ding-v2/
+├── ding.py              # Enhanced main script
+├── cache_manager.py     # Caching system
+├── repo_manager.py      # Repository management
+├── plugin_loader.py     # Plugin system
+└── README.md            # ding v2 documentation
+```
 
-- Enhance `src/ding/ding.py` with v2 features
-- Create plugin system in `src/ding/plugins/`
-- Add repository management module
-- Implement smart caching system
-- Add dependency resolution
+### Deliverables for ding v2
+- ✅ Cache management working
+- ✅ Repository add/remove functional
+- ✅ Basic plugin loader
+- ✅ Documentation & examples
 
 ---
 
-## 2. Advanced Security Tools
+## Component 2: dingo-audit
 
-### dingo-audit (✅ Ready - v1)
-
-Quick vulnerability scan and forensic checks.
-
-**Features**:
-- Quick, system, network, and full audit modes
-- Open port detection
-- Service checking
-- File permission audits
-- User account review
-- Network enumeration
-- Firewall status
-- System log analysis
+### Audit Modes (Already Implemented)
 
 ```bash
-dingo-audit --quick              # Fast scan (default)
-dingo-audit --system             # Deep system audit
-dingo-audit --network            # Network scan
-dingo-audit --all                # Complete audit
+# Quick scan (30 seconds)
+dingo-audit --quick              
+
+# Full system audit (5 minutes)
+dingo-audit --system             
+
+# Network enumeration
+dingo-audit --network            
+
+# Complete scan (10 minutes)
+dingo-audit --all                
+
+# Additional options
 dingo-audit --verbose            # Detailed output
-dingo-audit --output report.txt  # Export to file
+dingo-audit --output report.txt  # Save to file
 ```
 
-### dingo-forensics (Planned - v2)
+### Checks Performed
 
-Deeper forensic analysis for incident response.
+**System Audit:**
+- Open ports & listening services
+- Running services status
+- Critical file permissions
+- User accounts & sudoers
+- Firewall configuration
+- Available security updates
+- Recent system logs
 
-**Features**:
-- System state collection
-- Process chain analysis
-- Network flow tracking
-- File integrity monitoring
-- System timeline reconstruction
-- Evidence collection and analysis
+**Network Scan:**
+- Network interfaces & IPs
+- Active connections
+- Local network enumeration
+- Connection details
 
-```bash
-dingo-forensics --collect-evidence         # Gather forensic data
-dingo-forensics --analyze incident         # Analyze incident
-dingo-forensics --report html              # Generate HTML report
-dingo-forensics --timeline                 # Build system timeline
+### Implementation Files
+
+```
+v2/src/dingo-audit/
+├── dingo-audit.sh       # Main script (complete)
+└── README.md            # Usage documentation
 ```
 
-### dingo-monitor (Planned - v2)
-
-Real-time system monitoring daemon.
-
-**Features**:
-- Resource monitoring (CPU, memory, disk)
-- Alert thresholds
-- Anomaly detection
-- Trend analysis
-- Performance metrics
-- Alert notifications
-
-```bash
-dingo-monitor start                        # Start daemon
-dingo-monitor status                       # Show status
-dingo-monitor set-alert cpu 80%            # Set threshold
-dingo-monitor logs --last 1h               # Show alerts
-```
+### Deliverables for dingo-audit
+- ✅ All scan modes working
+- ✅ Output to console & file
+- ✅ Help documentation
+- ✅ Installation to /usr/local/bin/
 
 ---
 
-## 3. Directory Structure (v2)
+## Directory Structure (v2)
 
 ```
-dingo-os/
-│
-├── src/                                 # v1 source code
-│   ├── task-manager/
-│   ├── showip/
-│   ├── ding/
+v2/
+├── src/
+│   ├── ding-v2/
+│   │   ├── ding.py
+│   │   ├── cache_manager.py
+│   │   ├── repo_manager.py
+│   │   ├── plugin_loader.py
+│   │   └── README.md
+│   │
 │   └── dingo-audit/
+│       ├── dingo-audit.sh
+│       └── README.md
 │
-├── v2/                                  # v2 development
-│   ├── src/
-│   │   ├── ding-v2/                     # Enhanced ding
-│   │   │   ├── ding.py                  # Updated with v2 features
-│   │   │   ├── plugins/                 # Plugin system
-│   │   │   ├── cache/                   # Caching system
-│   │   │   └── repos/                   # Repository management
-│   │   │
-│   │   ├── dingo-audit/                 # ✓ Complete
-│   │   │   ├── dingo-audit.sh
-│   │   │   └── README.md
-│   │   │
-│   │   ├── dingo-forensics/             # New
-│   │   │   ├── main.cpp
-│   │   │   ├── evidence-collector.cpp
-│   │   │   └── incident-analyzer.cpp
-│   │   │
-│   │   └── dingo-monitor/               # New
-│   │       ├── monitor-daemon.py
-│   │       ├── alert-engine.py
-│   │       └── plugins/
-│   │
-│   ├── docs/
-│   │   ├── DING_v2_SPEC.md
-│   │   ├── DINGO_AUDIT_GUIDE.md
-│   │   ├── FORENSICS_GUIDE.md
-│   │   ├── MONITOR_GUIDE.md
-│   │   └── PLUGIN_API.md
-│   │
-│   ├── tests/
-│   │   ├── test-ding-plugins.sh
-│   │   ├── test-dingo-audit.sh
-│   │   ├── test-forensics.sh
-│   │   └── test-monitor.sh
-│   │
-│   └── V2_ROADMAP.md                    # This file
+├── docs/
+│   ├── DING_v2_GUIDE.md
+│   └── DINGO_AUDIT_USAGE.md
 │
-├── build/
-│   ├── bin/
-│   ├── iso/
-│   └── logs/
-│
-├── CUBIC_SETUP_GUIDE.md
-├── UBUNTU_SETUP_GUIDE.md
-├── README.md
-└── .gitignore
+└── V2_ROADMAP.md          # This file
 ```
 
 ---
 
-## 4. Development Phases (v2)
+## 1.5 Week Sprint Schedule
 
-### Phase 1: ding Enhancement (Weeks 1-2)
-- [ ] Enhance ding with plugin system
-- [ ] Add repository management
-- [ ] Implement smart caching
-- [ ] Add dependency analysis
-- [ ] Create plugin API documentation
+### Days 1-2: Setup & Planning
+- [ ] Review requirements
+- [ ] Setup v2 directory structure
+- [ ] Finalize ding v2 API design
+- [ ] Create implementation plan
 
-### Phase 2: Security Tools (Weeks 3-4)
-- [ ] Develop dingo-forensics (C++)
-- [ ] Add evidence collection
-- [ ] Create incident analysis
-- [ ] Generate forensic reports
+### Days 3-5: ding v2 Core Development
+- [ ] Implement cache_manager.py
+- [ ] Implement repo_manager.py
+- [ ] Create basic plugin_loader.py
+- [ ] Write unit tests
 
-### Phase 3: Monitoring (Weeks 5-6)
-- [ ] Create dingo-monitor daemon
-- [ ] Add alert thresholds
-- [ ] Implement anomaly detection
-- [ ] Build monitoring UI
-
-### Phase 4: Integration & Testing (Weeks 7-8)
-- [ ] End-to-end testing
-- [ ] Documentation completion
+### Days 6-8: ding v2 Integration & Testing
+- [ ] Integrate all components
+- [ ] Test cache functionality
+- [ ] Test repo management
+- [ ] Test plugin loading
 - [ ] Performance optimization
+
+### Days 9-10: dingo-audit Polish
+- [ ] Verify all scan modes work
+- [ ] Test output formatting
+- [ ] Add help documentation
+- [ ] Create usage examples
+
+### Days 11: Final Testing & Documentation
+- [ ] End-to-end testing
+- [ ] Create user guides
+- [ ] Document plugin API
 - [ ] Bug fixes
 
-### Phase 5: Release (Week 9)
-- [ ] v2 ISO creation
-- [ ] Release notes
-- [ ] User guide updates
+### Days 12-13: Submission Prep
+- [ ] Code review
+- [ ] Final polish
+- [ ] Create v2 README
+- [ ] Push to GitHub
 
 ---
 
-## 5. Technical Specifications
+## Technical Specifications
 
-### ding v2 Plugin System
+### ding v2 - cache_manager.py
 
 ```python
-# Plugin interface
-class DingPlugin:
-    def __init__(self, name, version):
-        self.name = name
-        self.version = version
+class CacheManager:
+    def __init__(self, cache_dir='~/.dingo/cache'):
+        self.cache_dir = cache_dir
     
-    def execute(self, command, args):
+    def get(self, key):
+        """Retrieve cached result"""
+        pass
+    
+    def set(self, key, value, ttl=86400):
+        """Store in cache with TTL"""
+        pass
+    
+    def clear(self):
+        """Clear all cache"""
+        pass
+    
+    def stats(self):
+        """Show cache statistics"""
+        pass
+```
+
+### ding v2 - repo_manager.py
+
+```python
+class RepoManager:
+    def __init__(self, sources_file='/etc/apt/sources.list'):
+        self.sources_file = sources_file
+    
+    def add_repo(self, name, url):
+        """Add repository"""
+        pass
+    
+    def remove_repo(self, name):
+        """Remove repository"""
+        pass
+    
+    def list_repos(self):
+        """List all repos"""
+        pass
+    
+    def enable_repo(self, name):
+        """Enable repository"""
+        pass
+    
+    def disable_repo(self, name):
+        """Disable repository"""
+        pass
+```
+
+### ding v2 - plugin_loader.py
+
+```python
+class PluginLoader:
+    def __init__(self, plugin_dir='~/.dingo/plugins'):
+        self.plugin_dir = plugin_dir
+    
+    def load_plugin(self, plugin_name):
+        """Load a plugin"""
+        pass
+    
+    def list_plugins(self):
+        """List available plugins"""
+        pass
+    
+    def execute_plugin(self, name, command):
         """Execute plugin command"""
         pass
-    
-    def get_help(self):
-        """Return help text"""
-        pass
-    
-    def on_install(self, package):
-        """Hook called after install"""
-        pass
-```
-
-### dingo-forensics - C++ Implementation
-
-```cpp
-class ForensicCollector {
-public:
-    void collect_system_state();
-    void collect_network_state();
-    void collect_process_chains();
-    void generate_report(const string& format);
-    void collect_evidence(const string& incident_type);
-};
-```
-
-### dingo-monitor - Python Implementation
-
-```python
-class MonitorDaemon:
-    def __init__(self):
-        self.alerts = {}
-        self.metrics = {}
-    
-    def start(self):
-        """Start monitoring daemon"""
-        pass
-    
-    def set_alert_threshold(self, metric, threshold):
-        """Configure alert"""
-        pass
-    
-    def check_anomalies(self):
-        """Detect anomalies"""
-        pass
 ```
 
 ---
 
-## 6. Milestones & Success Criteria
+## Success Criteria
 
-| Phase | Milestone | Criteria |
-|-------|-----------|----------|
-| 1 | ding v2 | Plugins working, repos functional, cache effective |
-| 2 | dingo-forensics | Evidence collection operational, reports generated |
-| 3 | dingo-monitor | Daemon stable, alerts working, UI responsive |
-| 4 | Integration | All tools working together, tests passing |
-| 5 | Release | v2 ISO boots, all features accessible |
+### ding v2
+- [ ] Cache stores & retrieves results
+- [ ] Add/remove repos works
+- [ ] List repos shows active PPAs
+- [ ] Basic plugins load without errors
+- [ ] Performance improved vs v1
+- [ ] Documentation complete
+
+### dingo-audit
+- [ ] All scan modes functional
+- [ ] Output format clean & readable
+- [ ] File export working
+- [ ] Help text clear
+- [ ] Installation to PATH works
+- [ ] Usage guide complete
+
+### Overall v2
+- [ ] Both tools tested end-to-end
+- [ ] v2 README created
+- [ ] All code documented
+- [ ] GitHub updated
+- [ ] Ready for submission
 
 ---
 
-## 7. Performance Targets
+## Testing Checklist
+
+### ding v2
+```bash
+# Cache operations
+ding cache-stats
+ding cache-clean
+ding cache-rebuild
+
+# Repository operations
+ding repo add test-repo ppa:test/ppa
+ding repo list
+ding repo remove test-repo
+
+# Existing commands still work
+ding install package-name
+ding search keyword
+ding update
+```
+
+### dingo-audit
+```bash
+# All scan modes
+dingo-audit --quick
+dingo-audit --system
+dingo-audit --network
+dingo-audit --all
+
+# Output options
+dingo-audit --quick --verbose
+dingo-audit --system --output audit.txt
+
+# Help
+dingo-audit --help
+```
+
+---
+
+## Performance Targets
 
 | Component | Target | Notes |
 |-----------|--------|-------|
-| ding | <1s for operations | Faster than v1 |
-| dingo-audit | <30s full scan | Parallel checks |
-| dingo-forensics | <5m full collection | Depends on system size |
-| dingo-monitor | <1% CPU overhead | Efficient daemon |
+| ding cache | <100ms lookup | In-memory + disk |
+| repo add | <1s | Update apt cache |
+| plugin load | <500ms | Python import |
+| dingo-audit quick | <30s | Parallel checks |
+| dingo-audit system | <5m | Deep scan |
 
 ---
 
-## 8. Security Considerations
+## Not Included (Defer to v3)
 
-- Plugin signature verification
-- Repository signing validation
-- Forensic data integrity (read-only collection)
-- Monitor alert confidentiality
-- Secure audit logging
-
----
-
-## 9. Next Steps
-
-1. **Week 1**: Enhance ding with v2 features
-2. **Week 2**: Test ding plugins
-3. **Week 3**: Start dingo-forensics development
-4. **Week 4**: Begin dingo-monitor daemon
+- ❌ Bucket Framework
+- ❌ dingo-forensics
+- ❌ dingo-monitor
+- ❌ Advanced plugin API
+- ❌ Plugin marketplace
 
 ---
 
-**v2 Estimated Timeline**: 8-10 weeks from start
+## Milestones
 
-For questions or suggestions, create an issue in the project repository.
+| Day | Milestone | Status |
+|-----|-----------|--------|
+| 2 | Design complete | Pending |
+| 5 | ding v2 core done | Pending |
+| 8 | All tests passing | Pending |
+| 11 | Documentation done | Pending |
+| 13 | v2 Complete & Pushed | Pending |
+
+---
+
+## Risks & Mitigation
+
+| Risk | Mitigation |
+|------|-----------|
+| Scope creep | Fixed feature list, defer to v3 |
+| Time overrun | Daily standups, track progress |
+| Plugin complexity | Start with simple hook system |
+| Cache bugs | Extensive testing, simple design |
+
+---
+
+## Next Steps
+
+1. Approve 1.5-week scope
+2. Start ding v2 development
+3. Test dingo-audit thoroughly
+4. Push to GitHub weekly
+
+---
+
+**v2 Target**: Friday EOD (1.5 weeks from now)
+
+For updates, check GitHub repository.
