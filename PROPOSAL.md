@@ -28,7 +28,6 @@ Create a custom, user-friendly Linux distribution (Dingo OS) based on Ubuntu, fe
 **Completed Deliverables**:
 - ✅ Custom Task Manager (C++ process monitor)
 - ✅ showip (network utilities wrapper)
-- ✅ ding (basic apt wrapper)
 - ✅ Cubic ISO configuration
 - ✅ Ubuntu 22.04 LTS bootable ISO
 - ✅ All utilities pre-installed and tested
@@ -38,7 +37,6 @@ Create a custom, user-friendly Linux distribution (Dingo OS) based on Ubuntu, fe
 **v1 Features**:
 - Task Manager: Process listing, filtering, killing
 - showip: Network interface display
-- ding: Simplified apt commands
 - ISO: Boots successfully on VM/bare metal
 
 ---

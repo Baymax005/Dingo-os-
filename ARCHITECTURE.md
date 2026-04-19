@@ -4,25 +4,25 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        DINGO OS (Custom ISO)                   │
+│                        DINGO OS v1 (Custom ISO)                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌───────────────────── User Layer ──────────────────────┐    │
 │  │  Custom CLI Tools (Integrated in $PATH)               │    │
-│  │  ┌─────────────────┐  ┌──────────────────┐           │    │
-│  │  │   ding          │  │   showip         │           │    │
-│  │  │ (pkg manager)   │  │ (network utils)  │           │    │
-│  │  └────────┬────────┘  └────────┬─────────┘           │    │
+│  │  ┌──────────────────┐  ┌──────────────────┐           │    │
+│  │  │  Task Manager    │  │   showip         │           │    │
+│  │  │(process monitor) │  │ (network utils)  │           │    │
+│  │  └────────┬─────────┘  └────────┬─────────┘           │    │
 │  │           │                    │                      │    │
 │  └───────────┼────────────────────┼──────────────────────┘    │
 │              │                    │                           │
 │  ┌───────────┼────────────────────┼──────────────────────┐    │
 │  │ Task Manager Layer               │                   │    │
 │  │  ┌────────────────────────────────────┐              │    │
-│  │  │  Custom Task Manager (C++/Python)  │              │    │
+│  │  │  Custom Task Manager (C++)         │              │    │
 │  │  │  - Process monitoring              │              │    │
 │  │  │  - Resource tracking               │              │    │
-│  │  │  - Process control (kill/pause)    │              │    │
+│  │  │  - Process control (kill)          │              │    │
 │  │  └────────────────┬───────────────────┘              │    │
 │  └───────────────────┼──────────────────────────────────┘    │
 │                      │                                        │
@@ -31,7 +31,6 @@
 │  │  ┌──────────────────────────────────────────────┐   │    │
 │  │  │ Linux Kernel & System Call Interface         │   │    │
 │  │  │ - /proc filesystem parsing                   │   │    │
-│  │  │ - apt package system (via wrapper)           │   │    │
 │  │  │ - ip command interface                       │   │    │
 │  │  │ - Process control syscalls (kill, etc)       │   │    │
 │  │  └──────────────────────────────────────────────┘   │    │
@@ -76,7 +75,6 @@ Dingo OS v2 builds on v1 with enhanced tooling for package management and securi
 │  ┌──── v1 Components (Unchanged) ────┐             │
 │  │  • task-manager (process monitor)  │             │
 │  │  • showip (network utilities)      │             │
-│  │  • ding v1 (basic apt wrapper)     │             │
 │  └────────────────────────────────────┘             │
 │                                                      │
 │  ┌─────── Ubuntu 22.04 LTS Base ───────┐           │
@@ -90,7 +88,7 @@ Dingo OS v2 builds on v1 with enhanced tooling for package management and securi
 
 #### 2.1 ding v2 - Enhanced Package Manager
 
-**Purpose**: Extend ding v1 with intelligent caching, repository management, and plugin support
+**Purpose**: Smart package manager wrapper for apt with intelligent caching, repository management, and plugin support
 
 **Architecture**:
 ```
@@ -249,7 +247,7 @@ plugins:
 
 ---
 
-## 3. Component Specifications
+## 3. Component Specifications (v1)
 
 ### 2.1 ding - Package Manager Wrapper
 

@@ -23,6 +23,8 @@ A custom Ubuntu-based Linux distribution with enhanced CLI utilities for package
 
 ### v1 Features (READY ✅)
 
+**v1 has 2 core components**
+
 #### 1. **Task Manager** (C++ Process Monitor)
 Monitor and control system processes with a clean CLI interface.
 
@@ -59,27 +61,6 @@ showip --help            # Show help
 - Clean, readable output
 
 **Files**: `src/showip/`
-
----
-
-#### 3. **ding v1** (Basic Package Manager)
-Simplified apt wrapper for package management.
-
-```bash
-ding install nginx       # Install package
-ding search python3      # Search packages
-ding update              # Update package lists
-ding remove old-pkg      # Remove package
-ding --help              # Show help
-```
-
-**What it does**:
-- Wraps apt with simpler commands
-- Friendly error messages
-- Configuration support
-- Package information
-
-**Files**: `src/ding/`
 
 ---
 
@@ -156,11 +137,10 @@ dingo-audit --all --verbose --output audit-report.txt
 ```
 Dingo-OS/
 │
-├── v1/ (STABLE)
+├── v1/ (STABLE - 2 Components)
 │   ├── src/
 │   │   ├── task-manager/     ✅ Complete (C++)
-│   │   ├── showip/           ✅ Complete (Bash)
-│   │   └── ding/             ✅ Complete (Python)
+│   │   └── showip/           ✅ Complete (Bash)
 │   │
 │   ├── build/
 │   │   ├── bin/              # Compiled binaries
@@ -169,7 +149,7 @@ Dingo-OS/
 │   ├── UBUNTU_SETUP_GUIDE.md
 │   └── CUBIC_SETUP_GUIDE.md
 │
-├── v2/ (IN DEVELOPMENT)
+├── v2/ (IN DEVELOPMENT - 2 Components)
 │   ├── src/
 │   │   ├── ding-v2/          🚀 In progress (Python)
 │   │   │   ├── ding.py
