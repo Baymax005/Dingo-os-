@@ -12,10 +12,12 @@ A custom Ubuntu-based Linux distribution with enhanced CLI utilities for package
 - **Build Time**: ~1 week
 - **Testing**: Tested on VirtualBox and bare metal
 
-### v2 - 🚀 IN DEVELOPMENT (1.5 weeks)
-- **Focus**: Package manager enhancements + security auditing
-- **Components**: ding v2, dingo-audit
-- **Target**: Complete by end of sprint
+### v2 - ✅ COMPLETE
+- **Status**: Bootable ISO ready for deployment
+- **Deliverables**: ding v2, dingo-audit, custom XFCE desktop with cyberpunk aesthetic
+- **ISO Size**: 5.2 GB
+- **Build Time**: Completed with Cubic
+- **Features**: GNOME removed, XFCE + LightDM, custom terminal colors, Plank dock, Whisker Menu, Dingo branding
 
 ---
 
@@ -244,6 +246,7 @@ v2/src/dingo-audit/dingo-audit.sh --quick
 - **[PROPOSAL.md](PROPOSAL.md)** - Project proposal and goals
 - **[UBUNTU_SETUP_GUIDE.md](UBUNTU_SETUP_GUIDE.md)** - v1 setup on Ubuntu
 - **[CUBIC_SETUP_GUIDE.md](CUBIC_SETUP_GUIDE.md)** - v1 ISO creation guide
+- **[v2/ISO_CUSTOMIZATIONS.md](v2/ISO_CUSTOMIZATIONS.md)** - v2 custom ISO build guide (7 phases)
 - **[v2/V2_ROADMAP.md](v2/V2_ROADMAP.md)** - v2 development plan
 - **[v2/docs/DING_v2_GUIDE.md](v2/docs/DING_v2_GUIDE.md)** - ding v2 features
 - **[v2/src/dingo-audit/README.md](v2/src/dingo-audit/README.md)** - dingo-audit usage
