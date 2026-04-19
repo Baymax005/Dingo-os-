@@ -46,7 +46,210 @@
 
 ---
 
-## 2. Component Specifications
+## 2. Dingo OS v2 - Enhanced Architecture
+
+**Status**: v2 Development (1.5 weeks)
+
+Dingo OS v2 builds on v1 with enhanced tooling for package management and security auditing.
+
+### v2 Component Overview
+
+```
+┌──────────────────────────────────────────────────────┐
+│          Dingo OS v2 (Enhanced)                      │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  ┌──────────── User Layer ──────────────┐           │
+│  │  Advanced CLI Tools (in $PATH)       │           │
+│  │  ┌──────────┐  ┌──────────────┐    │           │
+│  │  │ ding v2  │  │ dingo-audit  │    │           │
+│  │  │(enhanced)│  │(security)    │    │           │
+│  │  └──────────┘  └──────────────┘    │           │
+│  │                                      │           │
+│  │  ★ Smart caching                    │           │
+│  │  ★ Repository management           │           │
+│  │  ★ Basic plugin system             │           │
+│  │  ★ Vulnerability scanning          │           │
+│  │  ★ System forensics                │           │
+│  └──────────────────────────────────────┘           │
+│                                                      │
+│  ┌──── v1 Components (Unchanged) ────┐             │
+│  │  • task-manager (process monitor)  │             │
+│  │  • showip (network utilities)      │             │
+│  │  • ding v1 (basic apt wrapper)     │             │
+│  └────────────────────────────────────┘             │
+│                                                      │
+│  ┌─────── Ubuntu 22.04 LTS Base ───────┐           │
+│  │ Kernel | apt | Core System          │           │
+│  └──────────────────────────────────────┘           │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+### v2 New Components
+
+#### 2.1 ding v2 - Enhanced Package Manager
+
+**Purpose**: Extend ding v1 with intelligent caching, repository management, and plugin support
+
+**Architecture**:
+```
+ding v2 (Main CLI)
+├── cache_manager.py
+│   ├── Cache storage (~/.dingo/cache/)
+│   ├── TTL management
+│   ├── Index rebuilding
+│   └── Size limiting
+│
+├── repo_manager.py
+│   ├── Repository list management
+│   ├── Add/remove PPA handling
+│   ├── Enable/disable repos
+│   └── Sources.list integration
+│
+├── plugin_loader.py
+│   ├── Plugin discovery
+│   ├── Dynamic loading
+│   ├── Hook execution
+│   └── Plugin directory (~/.dingo/plugins/)
+│
+└── ding.py (v1 wrapper with v2 features)
+    ├── Backward compatible
+    ├── Cache integration
+    ├── Plugin orchestration
+    └── apt execution
+```
+
+**Key Features**:
+- **Smart Caching**: Store search results with TTL (24h default)
+- **Repository Management**: Add/remove/enable/disable PPAs
+- **Plugin System**: Load custom commands via Python plugins
+- **Performance**: <100ms cached searches vs 2-3s uncached
+
+**Files**:
+- `v2/src/ding-v2/ding.py` - Main entry point
+- `v2/src/ding-v2/cache_manager.py` - Caching system
+- `v2/src/ding-v2/repo_manager.py` - Repository management
+- `v2/src/ding-v2/plugin_loader.py` - Plugin system
+
+**Interfaces**:
+```bash
+ding cache-stats              # Show cache usage
+ding cache-clean              # Clear cache
+ding repo add NAME PPA         # Add repository
+ding repo list                 # List all repos
+ding repo remove NAME          # Remove repository
+ding plugin list               # Show plugins
+ding plugin load FILE          # Load plugin
+```
+
+**Dependencies**: `apt`, `apt-cache`, Python 3.8+
+
+---
+
+#### 2.2 dingo-audit - Security Scanner
+
+**Purpose**: Quick vulnerability and forensic assessment of system and network
+
+**Architecture**:
+```
+dingo-audit (Bash Script)
+├── System Audit Module
+│   ├── Open ports check (ss/netstat)
+│   ├── Service enumeration (systemctl)
+│   ├── File permissions audit
+│   ├── User account review
+│   ├── Firewall status
+│   ├── Security updates check
+│   └── System logs analysis
+│
+├── Network Audit Module
+│   ├── Network interface enumeration
+│   ├── Active connections listing
+│   ├── Local network scanning (nmap)
+│   └── Connection detail analysis
+│
+└── Output System
+    ├── Console output (default)
+    ├── File export (--output)
+    ├── Verbose mode (--verbose)
+    └── Color formatting
+```
+
+**Key Features**:
+- **Quick Scan**: <30 seconds for fast checks
+- **System Audit**: <5 minutes for deep scan
+- **Network Scan**: Local network enumeration
+- **Full Audit**: Combined system + network scan
+- **Export**: Save reports to file
+
+**Files**:
+- `v2/src/dingo-audit/dingo-audit.sh` - Main scanner
+- `v2/src/dingo-audit/README.md` - Usage guide
+
+**Interfaces**:
+```bash
+dingo-audit --quick           # Fast port/permission check
+dingo-audit --system          # Deep system audit
+dingo-audit --network         # Network scan
+dingo-audit --all             # Full audit
+dingo-audit --verbose         # Detailed output
+dingo-audit --output FILE     # Export to file
+dingo-audit --help            # Show help
+```
+
+**Dependencies**: `ss/netstat`, `systemctl`, `ufw/iptables`, optional `nmap`
+
+---
+
+### v2 Data Flow
+
+```
+User Input (CLI)
+    │
+    ├─→ ding v2
+    │   ├─ Check cache_manager
+    │   ├─ Load plugins
+    │   ├─ Manage repos
+    │   └─ Execute apt
+    │
+    └─→ dingo-audit
+        ├─ Run system checks
+        ├─ Run network scans
+        ├─ Format output
+        └─ Export report
+```
+
+---
+
+### v2 Configuration
+
+**ding v2 Config** (`~/.dingo/ding.conf`):
+```yaml
+cache:
+  enabled: true
+  max-size: 500M
+  ttl: 86400
+
+repositories:
+  - name: ubuntu-main
+    enabled: true
+  - name: ubuntu-security
+    enabled: true
+
+plugins:
+  enabled:
+    - custom-search
+  disabled: []
+```
+
+**dingo-audit Config** (command-line only):
+- No persistent config
+- Modes controlled via flags
+
+---
+
+## 3. Component Specifications
 
 ### 2.1 ding - Package Manager Wrapper
 
