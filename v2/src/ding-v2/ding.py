@@ -208,7 +208,7 @@ For more info: man ding
 def main():
     parser = argparse.ArgumentParser(
         prog='ding',
-        description='Dingo OS v2 Enhanced Package Manager'
+        description='Dingo OS v2 Enhanced Package Manager', add_help=False
     )
 
     parser.add_argument('--version', action='version', version=f'ding {__version__}')
