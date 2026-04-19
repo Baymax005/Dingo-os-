@@ -62,7 +62,7 @@ ding cache-rebuild               # Rebuild cache index
 **Auto-cache features**:
 - Automatic cleanup of old caches
 - Predictive caching for frequent searches
-- Per-bucket caching
+- Fast index rebuilding
 
 ### 4. Dependency Analysis
 
@@ -73,21 +73,7 @@ ding depends-on gcc              # Show what needs gcc
 ding depends-tree gcc            # Tree view
 ```
 
-### 5. Bucket Integration
-
-**Install to specific bucket**:
-```bash
-ding install --bucket S: nginx   # Install to services bucket
-ding install --bucket D: python3 # Install to data bucket
-```
-
-**List by bucket**:
-```bash
-ding list --bucket S:            # Show installed in services
-ding list --all-buckets          # Summary per bucket
-```
-
-### 6. Advanced Search
+### 5. Advanced Search
 
 **Enhanced search**:
 ```bash
@@ -98,7 +84,7 @@ ding search --size >10M                    # Search by size
 ding search --recent                       # Recently published
 ```
 
-### 7. Configuration Management
+### 6. Configuration Management
 
 **Config files**:
 ```bash

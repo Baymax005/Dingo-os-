@@ -1,7 +1,7 @@
 # Dingo OS v2 - Roadmap & Architecture
 
 **Status**: Planning phase  
-**Target**: Enhanced filesystem architecture, package management integration, advanced security tools
+**Target**: Enhanced package management, security tools, and advanced utilities
 
 ---
 
@@ -9,103 +9,52 @@
 
 Dingo OS v2 builds on v1 by introducing:
 
-1. **Bucket Framework** — Drive-letter architecture (Windows-like paths on Linux kernel)
-2. **ding Package Manager** — Replace/wrap apt with custom CLI
-3. **Advanced Utilities** — dingo-audit, dingo-forensics, and more
-4. **Modular Design** — Plugin architecture for extensions
+1. **ding Package Manager** — Replace/wrap apt with smart features
+2. **dingo-audit** — Vulnerability scanning and forensic checks (✅ Ready)
+3. **Advanced Security Tools** — dingo-forensics, dingo-monitor
+4. **Plugin Architecture** — Extensible system for custom tools
 
 ---
 
 ## v2 Component Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│            Dingo OS v2 Architecture                     │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  ┌──────────────────── User Layer ────────────────┐    │
-│  │  Advanced CLI Tools (Integrated in $PATH)      │    │
-│  │  ┌─────┐  ┌─────┐  ┌──────┐  ┌──────────┐    │    │
-│  │  │ding │  │show │  │dingo │  │dingo-   │    │    │
-│  │  │     │  │ ip  │  │audit │  │forensics│    │    │
-│  │  └─────┘  └─────┘  └──────┘  └──────────┘    │    │
-│  └──────────────────────────────────────────────┘    │
-│                                                          │
-│  ┌──────────── Bucket Framework Layer ──────────┐    │
-│  │  Virtual Drive Letters (D:, E:, F:, etc)    │    │
-│  │  ├─ D: = /data (user data bucket)           │    │
-│  │  ├─ E: = /etc (configuration bucket)        │    │
-│  │  ├─ S: = /srv (services bucket)             │    │
-│  │  └─ T: = /tmp (temporary bucket)            │    │
-│  └──────────────────────────────────────────────┘    │
-│                                                          │
-│  ┌─────── Package Management Layer ──────────┐    │
-│  │  ding (Custom apt wrapper)                │    │
-│  │  ├─ Smart caching                        │    │
-│  │  ├─ Plugin system                        │    │
-│  │  └─ Package hooks                        │    │
-│  └───────────────────────────────────────────┘    │
-│                                                          │
-│  ┌──────── Ubuntu 22.04 LTS (Base) ─────────┐    │
-│  │ Kernel | apt | Core System                 │    │
-│  └────────────────────────────────────────────┘    │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────┐
+│       Dingo OS v2 Architecture                 │
+├────────────────────────────────────────────────┤
+│                                                │
+│  ┌─────────── User Layer ──────────────┐     │
+│  │  Advanced CLI Tools (in $PATH)      │     │
+│  │  ┌──────┐  ┌────────┐  ┌────────┐  │     │
+│  │  │ding  │  │dingo   │  │dingo   │  │     │
+│  │  │      │  │-audit  │  │-monitor│  │     │
+│  │  └──────┘  └────────┘  └────────┘  │     │
+│  └─────────────────────────────────────┘     │
+│                                                │
+│  ┌─── Package Management Layer ──────┐       │
+│  │  ding (Custom apt wrapper)         │       │
+│  │  ├─ Smart caching                 │       │
+│  │  ├─ Plugin system                 │       │
+│  │  ├─ Repository management         │       │
+│  │  └─ Dependency analysis           │       │
+│  └────────────────────────────────────┘       │
+│                                                │
+│  ┌──── Security & Audit Layer ────────┐      │
+│  │  dingo-audit (✅ Ready)             │      │
+│  │  dingo-forensics (Planned)         │      │
+│  │  dingo-monitor (Planned)           │      │
+│  └────────────────────────────────────┘      │
+│                                                │
+│  ┌──── Ubuntu 22.04 LTS (Base) ──────┐      │
+│  │ Kernel | apt | Core System         │      │
+│  └────────────────────────────────────┘      │
+│                                                │
+└────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 1. Bucket Framework
-
-### Concept
-
-Instead of standard Linux hierarchy:
-```
-/home
-/etc
-/var
-/opt
-/srv
-```
-
-Create virtual "buckets" (drive letters) that map to organized directories:
-
-```
-D: = /mnt/dingo/data        (User data, documents, projects)
-E: = /mnt/dingo/etc         (Configuration files)
-S: = /mnt/dingo/services    (Services, daemons, apps)
-T: = /mnt/dingo/temp        (Temporary files, caches)
-W: = /mnt/dingo/workspace   (Development work)
-```
-
-### Implementation
-
-**Daemon**: `dingo-bucket-daemon` (C++)
-
-- Maps drive letters to paths
-- Handles mount/unmount
-- Provides API for tools to query bucket locations
-
-**CLI**: `dingo-bucket` (Bash wrapper)
-
-```bash
-dingo-bucket mount D:/              # Mount data bucket
-dingo-bucket list                   # Show all buckets
-dingo-bucket query D:/myfile.txt    # Get actual path
-dingo-bucket info E:                # Bucket info
-```
-
-### Benefits
-
-- Organized file structure
-- Easier backups (bucket-based)
-- Simplified path references
-- Windows-familiar paradigm on Linux
-- Easy data migration
-
----
-
-## 2. ding Package Manager Integration
+## 1. ding Package Manager Enhancement
 
 ### Current Status (v1)
 
@@ -119,173 +68,200 @@ dingo-bucket info E:                # Bucket info
    ```bash
    ding cache-stats      # Show cache usage
    ding cache-clean      # Clear cache
+   ding cache-rebuild    # Rebuild index
    ```
 
 2. **Plugin System**
    ```bash
-   ding plugin list       # Show installed plugins
-   ding plugin install deb-security
+   ding plugin list                    # Show installed plugins
+   ding plugin install security-check
    ding plugin remove old-plugin
    ```
 
 3. **Repository Management**
    ```bash
-   ding repo add ppa:ubuntu/precise
+   ding repo add ubuntu-security ppa:ubuntu/security
    ding repo list
-   ding repo remove ppa:ubuntu/precise
+   ding repo remove ubuntu-security
    ```
 
 4. **Dependency Analysis**
    ```bash
-   ding depends gcc      # Show dependencies
-   ding depends-on gcc   # Show what depends on gcc
+   ding depends gcc              # Show dependencies
+   ding depends-on gcc           # Show what depends on gcc
+   ding depends-tree gcc         # Tree view
    ```
 
-5. **Bucket Integration**
+5. **Advanced Search**
    ```bash
-   ding install --bucket S: gcc     # Install to services bucket
-   ding list --bucket D:            # List installed in data bucket
+   ding search --category dev gcc
+   ding search --installed
+   ding search --upgradable
+   ding search --size >10M
    ```
 
 ### Implementation Plan
 
 - Enhance `src/ding/ding.py` with v2 features
 - Create plugin system in `src/ding/plugins/`
-- Add bucket support to package metadata
-- Create repository management module
+- Add repository management module
+- Implement smart caching system
+- Add dependency resolution
 
 ---
 
-## 3. Advanced Security Tools
+## 2. Advanced Security Tools
 
-### dingo-audit (Already Started ✓)
+### dingo-audit (✅ Ready - v1)
 
 Quick vulnerability scan and forensic checks.
 
+**Features**:
+- Quick, system, network, and full audit modes
+- Open port detection
+- Service checking
+- File permission audits
+- User account review
+- Network enumeration
+- Firewall status
+- System log analysis
+
 ```bash
-dingo-audit --quick        # Fast scan
-dingo-audit --full         # Deep audit
-dingo-audit --export json  # Export as JSON
+dingo-audit --quick              # Fast scan (default)
+dingo-audit --system             # Deep system audit
+dingo-audit --network            # Network scan
+dingo-audit --all                # Complete audit
+dingo-audit --verbose            # Detailed output
+dingo-audit --output report.txt  # Export to file
 ```
 
-### dingo-forensics (Planned)
+### dingo-forensics (Planned - v2)
 
 Deeper forensic analysis for incident response.
 
 **Features**:
-- File integrity monitoring
+- System state collection
 - Process chain analysis
 - Network flow tracking
+- File integrity monitoring
 - System timeline reconstruction
-- Evidence collection
+- Evidence collection and analysis
 
 ```bash
-dingo-forensics --collect-evidence   # Gather forensic data
-dingo-forensics --analyze incident   # Analyze incident
-dingo-forensics --report html        # Generate HTML report
+dingo-forensics --collect-evidence         # Gather forensic data
+dingo-forensics --analyze incident         # Analyze incident
+dingo-forensics --report html              # Generate HTML report
+dingo-forensics --timeline                 # Build system timeline
 ```
 
-### dingo-monitor (Planned)
+### dingo-monitor (Planned - v2)
 
 Real-time system monitoring daemon.
 
 **Features**:
-- Resource monitoring
+- Resource monitoring (CPU, memory, disk)
 - Alert thresholds
 - Anomaly detection
 - Trend analysis
+- Performance metrics
+- Alert notifications
+
+```bash
+dingo-monitor start                        # Start daemon
+dingo-monitor status                       # Show status
+dingo-monitor set-alert cpu 80%            # Set threshold
+dingo-monitor logs --last 1h               # Show alerts
+```
 
 ---
 
-## 4. Directory Structure (v2)
+## 3. Directory Structure (v2)
 
 ```
 dingo-os/
 │
-├── v1/                              # v1 stable (current)
-│   ├── src/
-│   │   ├── task-manager/
-│   │   ├── showip/
-│   │   ├── ding/
-│   │   └── dingo-audit/
-│   ├── UBUNTU_SETUP_GUIDE.md
-│   ├── CUBIC_SETUP_GUIDE.md
-│   └── build/
+├── src/                                 # v1 source code
+│   ├── task-manager/
+│   ├── showip/
+│   ├── ding/
+│   └── dingo-audit/
 │
-├── v2/                              # v2 development
+├── v2/                                  # v2 development
 │   ├── src/
-│   │   ├── ding/                    # Enhanced ding
-│   │   │   ├── ding.py              # Updated with v2 features
-│   │   │   ├── plugins/             # Plugin system
-│   │   │   ├── repos/               # Repository management
-│   │   │   └── cache/               # Caching system
+│   │   ├── ding-v2/                     # Enhanced ding
+│   │   │   ├── ding.py                  # Updated with v2 features
+│   │   │   ├── plugins/                 # Plugin system
+│   │   │   ├── cache/                   # Caching system
+│   │   │   └── repos/                   # Repository management
 │   │   │
-│   │   ├── dingo-audit/             # ✓ Started
+│   │   ├── dingo-audit/                 # ✓ Complete
 │   │   │   ├── dingo-audit.sh
 │   │   │   └── README.md
 │   │   │
-│   │   ├── dingo-forensics/         # New
+│   │   ├── dingo-forensics/             # New
 │   │   │   ├── main.cpp
 │   │   │   ├── evidence-collector.cpp
 │   │   │   └── incident-analyzer.cpp
 │   │   │
-│   │   ├── dingo-monitor/           # New
-│   │   │   ├── monitor-daemon.py
-│   │   │   ├── alert-engine.py
-│   │   │   └── plugins/
-│   │   │
-│   │   ├── bucket-framework/        # New
-│   │   │   ├── bucket-daemon.cpp
-│   │   │   ├── bucket-cli.sh
-│   │   │   └── mount-manager.cpp
-│   │   │
-│   │   └── task-manager/            # Enhanced from v1
-│   │       └── plugin-api/
+│   │   └── dingo-monitor/               # New
+│   │       ├── monitor-daemon.py
+│   │       ├── alert-engine.py
+│   │       └── plugins/
 │   │
 │   ├── docs/
-│   │   ├── BUCKET_FRAMEWORK.md
 │   │   ├── DING_v2_SPEC.md
+│   │   ├── DINGO_AUDIT_GUIDE.md
 │   │   ├── FORENSICS_GUIDE.md
+│   │   ├── MONITOR_GUIDE.md
 │   │   └── PLUGIN_API.md
 │   │
 │   ├── tests/
-│   │   ├── test-bucket-framework.cpp
 │   │   ├── test-ding-plugins.sh
-│   │   └── test-forensics.sh
+│   │   ├── test-dingo-audit.sh
+│   │   ├── test-forensics.sh
+│   │   └── test-monitor.sh
 │   │
-│   └── V2_ROADMAP.md                # This file
+│   └── V2_ROADMAP.md                    # This file
 │
-├── README.md                         # Updated for both v1 & v2
+├── build/
+│   ├── bin/
+│   ├── iso/
+│   └── logs/
+│
+├── CUBIC_SETUP_GUIDE.md
+├── UBUNTU_SETUP_GUIDE.md
+├── README.md
 └── .gitignore
 ```
 
 ---
 
-## 5. Development Phases (v2)
+## 4. Development Phases (v2)
 
-### Phase 1: Foundation (Weeks 1-2)
-- [ ] Setup v2 directory structure
+### Phase 1: ding Enhancement (Weeks 1-2)
 - [ ] Enhance ding with plugin system
-- [ ] Complete dingo-audit utility
-- [ ] Begin bucket framework design
+- [ ] Add repository management
+- [ ] Implement smart caching
+- [ ] Add dependency analysis
+- [ ] Create plugin API documentation
 
-### Phase 2: Bucket Framework (Weeks 3-4)
-- [ ] Implement bucket-daemon (C++)
-- [ ] Create bucket-cli wrapper
-- [ ] Add mount/unmount/query operations
-- [ ] Integration tests
+### Phase 2: Security Tools (Weeks 3-4)
+- [ ] Develop dingo-forensics (C++)
+- [ ] Add evidence collection
+- [ ] Create incident analysis
+- [ ] Generate forensic reports
 
-### Phase 3: Advanced Tools (Weeks 5-6)
-- [ ] Develop dingo-forensics
+### Phase 3: Monitoring (Weeks 5-6)
 - [ ] Create dingo-monitor daemon
-- [ ] Add alert system
-- [ ] Plugin architecture
+- [ ] Add alert thresholds
+- [ ] Implement anomaly detection
+- [ ] Build monitoring UI
 
 ### Phase 4: Integration & Testing (Weeks 7-8)
-- [ ] ISO generation with v2 tools
 - [ ] End-to-end testing
 - [ ] Documentation completion
 - [ ] Performance optimization
+- [ ] Bug fixes
 
 ### Phase 5: Release (Week 9)
 - [ ] v2 ISO creation
@@ -294,25 +270,7 @@ dingo-os/
 
 ---
 
-## 6. Technical Specifications
-
-### Bucket Framework - C++ Daemon
-
-```cpp
-// Example bucket-daemon structure
-class BucketDaemon {
-public:
-    void mount_bucket(const string& letter, const string& path);
-    void unmount_bucket(const string& letter);
-    string query_bucket_path(const string& letter);
-    vector<Bucket> list_buckets();
-    
-private:
-    map<string, Bucket> buckets;
-    void persist_config();
-    void load_config();
-};
-```
+## 5. Technical Specifications
 
 ### ding v2 Plugin System
 
@@ -330,6 +288,10 @@ class DingPlugin:
     def get_help(self):
         """Return help text"""
         pass
+    
+    def on_install(self, package):
+        """Hook called after install"""
+        pass
 ```
 
 ### dingo-forensics - C++ Implementation
@@ -341,63 +303,75 @@ public:
     void collect_network_state();
     void collect_process_chains();
     void generate_report(const string& format);
+    void collect_evidence(const string& incident_type);
 };
+```
+
+### dingo-monitor - Python Implementation
+
+```python
+class MonitorDaemon:
+    def __init__(self):
+        self.alerts = {}
+        self.metrics = {}
+    
+    def start(self):
+        """Start monitoring daemon"""
+        pass
+    
+    def set_alert_threshold(self, metric, threshold):
+        """Configure alert"""
+        pass
+    
+    def check_anomalies(self):
+        """Detect anomalies"""
+        pass
 ```
 
 ---
 
-## 7. Milestones & Success Criteria
+## 6. Milestones & Success Criteria
 
 | Phase | Milestone | Criteria |
 |-------|-----------|----------|
-| 1 | v2 Foundation | ding plugins working, dingo-audit complete |
-| 2 | Bucket Framework | Mount/query operations functional |
-| 3 | Advanced Tools | dingo-forensics and monitor operational |
+| 1 | ding v2 | Plugins working, repos functional, cache effective |
+| 2 | dingo-forensics | Evidence collection operational, reports generated |
+| 3 | dingo-monitor | Daemon stable, alerts working, UI responsive |
 | 4 | Integration | All tools working together, tests passing |
 | 5 | Release | v2 ISO boots, all features accessible |
 
 ---
 
-## 8. Backward Compatibility
-
-- v2 maintains full v1 functionality
-- All v1 tools work alongside v2 tools
-- Gradual migration path for users
-- v1 can run in legacy mode
-
----
-
-## 9. Performance Targets
+## 7. Performance Targets
 
 | Component | Target | Notes |
 |-----------|--------|-------|
 | ding | <1s for operations | Faster than v1 |
-| bucket-daemon | <100ms latency | Background service |
 | dingo-audit | <30s full scan | Parallel checks |
 | dingo-forensics | <5m full collection | Depends on system size |
 | dingo-monitor | <1% CPU overhead | Efficient daemon |
 
 ---
 
-## 10. Security Considerations
+## 8. Security Considerations
 
-- Bucket isolation (process/permission-based)
-- Plugin sandboxing
+- Plugin signature verification
+- Repository signing validation
 - Forensic data integrity (read-only collection)
 - Monitor alert confidentiality
-- Plugin signature verification
+- Secure audit logging
 
 ---
 
-## 11. Next Steps
+## 9. Next Steps
 
-1. **Week 1**: Review v2 roadmap with team
-2. **Week 2**: Begin bucket framework design
-3. **Week 3**: Start dingo-audit integration testing
-4. **Week 4**: Phase 1 completion review
+1. **Week 1**: Enhance ding with v2 features
+2. **Week 2**: Test ding plugins
+3. **Week 3**: Start dingo-forensics development
+4. **Week 4**: Begin dingo-monitor daemon
 
 ---
 
-**v2 Estimated Timeline**: 8-10 weeks from approval
+**v2 Estimated Timeline**: 8-10 weeks from start
 
 For questions or suggestions, create an issue in the project repository.
